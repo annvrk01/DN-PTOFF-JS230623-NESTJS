@@ -1,15 +1,20 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IsEmail, IsNotEmpty, Length } from 'class-validator';
+@Entity()
 export class User {
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    username: string;
+  @Column({ length: 50, name: 'first_name' })
+  firstName: string;
 
-    email: string;
+  @Column({ length: 50, name: 'last_name' })
+  lastName: string;
 
-    firstName?: string;
+  @Column({ length: 255, unique: true })
+  @IsEmail({}, { message: 'Incorrect email' })
+  email: string;
 
-    lastName?: string;
-
-    isDeleted: boolean = false;
-
-    password: string;
+  @Column({ default: true })
+  isActive: boolean;
 }
