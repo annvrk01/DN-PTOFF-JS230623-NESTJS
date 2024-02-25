@@ -1,17 +1,15 @@
 import {
-  validate,
   Length,
   IsInt,
   Min,
   Max,
   IsEmail,
-  IsDate,
-  IsBoolean,
   MinLength,
   MaxLength,
 } from '@nestjs/class-validator';
 
 export class UserDTO {
+
   @Length(5, 25)
   @MinLength(5, {
     message: 'name is too short',
@@ -21,6 +19,8 @@ export class UserDTO {
   })
   firstName: string;
 
+  lastName: string;
+
   @IsInt()
   @Min(1)
   @Max(120)
@@ -29,14 +29,6 @@ export class UserDTO {
   @IsEmail()
   email: string;
 
-  @IsDate()
-  createDate: string;
-
-  @IsInt()
-  @Min(0)
-  @Max(11)
   phoneNumber: number;
 
-  @IsBoolean()
-  isLogin: boolean;
 }

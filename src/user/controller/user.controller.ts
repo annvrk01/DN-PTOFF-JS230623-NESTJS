@@ -6,42 +6,81 @@ import {
   Post,
   Put,
   Delete,
-  HttpCode,
   Header,
   ParseIntPipe,
+  Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserDTO } from '../request/user.request';
 import { UserService } from '../service/user.service';
-import { User } from '../entities/user.entity';
 import { UserResponse } from '../responses/user.response';
+import { UserSearchRequest } from '../request/user.search.request';
+import { Paginate } from 'src/common/paginate';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('')
-  @HttpCode(204)
-  @Header('Cache-Control', 'none')
-  create(@Body() userDTO: UserDTO): Promise<UserResponse> {
-    return this.userService.create(userDTO);
-  }
-
+ /**
+  * 
+  * @param userSearchRequest 
+  * @returns 
+  */
   @Get()
-  async findAll(): Promise<UserResponse[]> {
-    return this.userService.findAll();
+  async findAll(
+    @Query() userSearchRequest: UserSearchRequest,
+  ): Promise<Paginate> {
+    try {
+      return this.userService.findAll(userSearchRequest);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
+    }
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return `This action returns a #${id} cat`;
+    return this.userService.findOne(id)
   }
 
+   /**
+   *
+   * @param userDTO
+   * @returns
+   */
+   @Post('')
+   @Header('Cache-Control', 'none')
+   create(@Body() userDTO: UserDTO): Promise<UserResponse> {
+       return this.userService.create(userDTO);
+   }
+
+  /**
+   *
+   * @param id
+   * @param body
+   * @returns
+   */
   @Put(':id')
-  update(@Param('id') id: string, @Body() body: any): string {
+  update(@Param('id', ParseIntPipe) id: number, @Body() userDTO: UserDTO): string {
+    this.userService.update(id, userDTO)
     return 'update success';
   }
 
+  /**
+   *
+   * @param id
+   * @returns
+   */
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return 'this is remove';
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.remove(id);
   }
 }

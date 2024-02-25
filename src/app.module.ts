@@ -5,6 +5,8 @@ import { UserModule } from './user/user.module';
 import { MessageModule } from './message/message.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
+import { Profile } from './user/entities/profile.enitity';
+import { Role } from './user/entities/role.entity';
 
 @Module({
   imports: [
@@ -15,7 +17,8 @@ import { User } from './user/entities/user.entity';
       username: 'root',
       password: 'root',
       database: 'nestjs_dn',
-      entities: [User],
+      entities: [User, Profile, Role],
+      // entities: [`${__dirname}/**/*.entity.ts`],
       synchronize: true,
     }),
     UserModule,

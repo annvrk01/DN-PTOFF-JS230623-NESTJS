@@ -1,5 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
+import { Profile } from './profile.enitity';
+import { Role } from './role.entity';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -12,9 +25,25 @@ export class User {
   lastName: string;
 
   @Column({ length: 255, unique: true })
-  @IsEmail({}, { message: 'Incorrect email' })
   email: string;
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToOne(() => Profile)
+  @JoinColumn()
+  profile: Profile;
+
+  @ManyToMany(() => Role)
+  @JoinTable()
+  roles: Role[];
+
+  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
+  deletedAt?: Date;
 }
