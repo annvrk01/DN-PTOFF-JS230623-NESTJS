@@ -17,12 +17,12 @@ let AppController = class AppController {
         this.appService = appService;
     }
     getHello() {
-        return "Tan , Phu ";
+        return 'Tan , Phu ';
     }
 };
 exports.AppController = AppController;
 __decorate([
-    (0, common_1.Get)("/test"),
+    (0, common_1.Get)('/test'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", String)

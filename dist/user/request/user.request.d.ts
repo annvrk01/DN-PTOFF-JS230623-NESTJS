@@ -1,8 +1,7 @@
 export declare class UserDTO {
-    name: string;
+    firstName: string;
+    lastName: string;
     age: number;
     email: string;
-    createDate: string;
     phoneNumber: number;
-    isLogin: boolean;
 }

@@ -23,7 +23,7 @@ __decorate([
         message: 'name is too long',
     }),
     __metadata("design:type", String)
-], UserDTO.prototype, "name", void 0);
+], UserDTO.prototype, "firstName", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
@@ -34,18 +34,4 @@ __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
 ], UserDTO.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", String)
-], UserDTO.prototype, "createDate", void 0);
-__decorate([
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(0),
-    (0, class_validator_1.Max)(11),
-    __metadata("design:type", Number)
-], UserDTO.prototype, "phoneNumber", void 0);
-__decorate([
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], UserDTO.prototype, "isLogin", void 0);
 //# sourceMappingURL=user.request.js.map

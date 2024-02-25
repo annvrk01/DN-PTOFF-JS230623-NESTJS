@@ -5,28 +5,91 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
+const user_entity_1 = require("../entities/user.entity");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const user_response_1 = require("../responses/user.response");
 let UserService = class UserService {
-    constructor() {
-        this.users = [{
-                id: 1,
-                username: '',
-                email: '',
-                isDeleted: false,
-                password: ''
-            }];
+    constructor(userRepository) {
+        this.userRepository = userRepository;
     }
-    create(user) {
-        this.users.push(user);
+    async findAll(userSearchRequest) {
+        const findManyOptions = {
+            where: {
+                firstName: (0, typeorm_2.ILike)(`%${userSearchRequest.keyword || ''}%`)
+            },
+            order: { id: 'DESC' },
+            take: userSearchRequest.limit,
+            skip: (userSearchRequest.page - 1) * userSearchRequest.limit,
+            withDeleted: true,
+        };
+        const [result, total] = await this.userRepository.findAndCount(findManyOptions);
+        const usersRes = await Promise.all(result.map((user) => {
+            const userRes = new user_response_1.UserResponse();
+            userRes.firstName = user.firstName;
+            return userRes;
+        }));
+        return {
+            data: usersRes,
+            count: total
+        };
     }
-    findAll() {
-        return this.users;
+    async findOne(id) {
+        const user = await this.userRepository.findOneBy({ id });
+        if (!user) {
+            throw new common_1.NotFoundException();
+        }
+        const userResponse = new user_response_1.UserResponse();
+        userResponse.email = user.email;
+        userResponse.firstName = user.firstName;
+        return userResponse;
+    }
+    async remove(id) {
+        const user = await this.userRepository.findOneBy({ id });
+        if (!user) {
+            throw new common_1.NotFoundException();
+        }
+        await this.userRepository.softRemove(user);
+    }
+    async create(userDTO) {
+        let user = new user_entity_1.User();
+        user.firstName = userDTO.firstName;
+        user.lastName = userDTO.lastName;
+        user.email = userDTO.email;
+        const newUser = await this.userRepository.save(user).catch(err => {
+            throw new common_1.HttpException({
+                message: err.message
+            }, common_1.HttpStatus.BAD_REQUEST);
+        });
+        let userRes = new user_response_1.UserResponse();
+        userRes.firstName = newUser.firstName;
+        return userRes;
+    }
+    async update(id, userDTO) {
+        let user = new user_entity_1.User();
+        user.firstName = userDTO.firstName;
+        user.lastName = userDTO.lastName;
+        user.email = userDTO.email;
+        await this.userRepository.update({ id }, user).catch(err => {
+            throw new common_1.HttpException({
+                message: err.message
+            }, common_1.HttpStatus.BAD_REQUEST);
+        });
     }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

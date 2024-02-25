@@ -1,9 +1,14 @@
+import { Profile } from './profile.enitity';
+import { Role } from './role.entity';
 export declare class User {
     id: number;
-    username: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    firstName?: string;
-    lastName?: string;
-    isDeleted: boolean;
-    password: string;
+    isActive: boolean;
+    profile: Profile;
+    roles: Role[];
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt?: Date;
 }
